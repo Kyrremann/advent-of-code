@@ -5,12 +5,10 @@ File.readlines('input/day-2.txt').each do |line|
   PASSWORDS << line.chomp
 end
 
-REGEX = /(?<range>\d+-\d+)\s(?<letter>\w):\s(?<password>\w+)/
-
 def star_1
   correct_passwords_counter = 0
   PASSWORDS.each do |p|
-    matches = p.match(REGEX)
+    matches = p.match(/(?<range>\d+-\d+)\s(?<letter>\w):\s(?<password>\w+)/)
     if matches
       range = matches[:range]
       letter = matches[:letter]
