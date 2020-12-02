@@ -8,6 +8,7 @@ def star_1
       next if i1 == i2
       if (v1 + v2) == 2020 then
         p v1, v2, v1 * v2
+        return
       end
     end
   end
@@ -20,6 +21,7 @@ def star_2
         next if i1 == i2 or i1 == i3 or i2 == i3
         if (v1 + v2 + v3) == 2020 then
           p v1, v2, v3, v1 * v2 * v3
+          return
         end
       end
     end
