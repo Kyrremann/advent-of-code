@@ -5,7 +5,7 @@ File.readlines('input/day-05.txt').each do |line|
   INPUT << line.chomp
 end
 
-def the_splitter(data, range)
+def parser(data, range)
   data.each do |d|
     left, right = range.each_slice((range.length/2.0).round).to_a
     if d == 'F' or d == 'L'
@@ -20,11 +20,8 @@ end
 
 def find_seat(boarding_pass)
   matches = boarding_pass.match(/^(\w{7})(\w{3})$/)
-  row = matches[1].chars
-  row = the_splitter(row, (0..127).to_a)
-
-  coloumn = matches[2].chars
-  coloumn = the_splitter(coloumn, (0..7).to_a)
+  row = parser(matches[1].chars, (0..127).to_a)
+  coloumn = parser(matches[2].chars, (0..7).to_a)
   return row, coloumn, (row * 8) + coloumn
 end
 
@@ -43,13 +40,13 @@ def tests
 end
 
 def star_1
-  p find_seat(INPUT.max {|a, b| find_seat(a) <=> find_seat(b)})
+  p "Highest seat id: #{find_seat(INPUT.max {|a, b| find_seat(a) <=> find_seat(b)})}"
 end
 
 def star_2
   all_seats = (95..838).to_a
   seats = INPUT.map {|bp| find_seat(bp)[2]}.sort
-  p (all_seats - seats)
+  p "My seat id: #{(all_seats - seats)}"
 end
 
 tests
