@@ -44,26 +44,23 @@ end
 
 def tests
   row, column, seat = find_seat('BFFFBBFRRR')
-  p [row, column, seat]
-  p row == 70 && column == 7 && seat == 567
+  p "#{[row, column, seat]} is #{row == 70 && column == 7 && seat == 567}"
 
   row, column, seat = find_seat('FFFBBBFRRR')
-  p [row, column, seat]
-  p row == 14 && column == 7 && seat == 119
+  p "#{[row, column, seat]} is #{row == 14 && column == 7 && seat == 119}"
 
   row, column, seat = find_seat('BBFFBBFRLL')
-  p [row, column, seat]
-  p row == 102 && column == 4 && seat == 820
+  p "#{[row, column, seat]} is #{row == 102 && column == 4 && seat == 820}"
 end
 
 def star_1
-  p "Highest seat id: #{find_seat(INPUT.max {|a, b| find_seat(a) <=> find_seat(b)})}"
+  p "Highest seat id: #{simple_binary(INPUT.max_by {|bp| simple_binary(bp)})}"
 end
 
 def star_2
   all_seats = (95..838).to_a
   seats = INPUT.map {|bp| simple_binary(bp)}.sort
-  p "My seat id: #{(all_seats - seats)}"
+  p "My seat id: #{(all_seats - seats).first}"
 end
 
 tests
