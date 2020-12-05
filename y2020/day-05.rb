@@ -21,8 +21,8 @@ end
 def find_seat(boarding_pass)
   matches = boarding_pass.match(/^(\w{7})(\w{3})$/)
   row = parser(matches[1].chars, (0..127).to_a)
-  coloumn = parser(matches[2].chars, (0..7).to_a)
-  return row, coloumn, (row * 8) + coloumn
+  column = parser(matches[2].chars, (0..7).to_a)
+  return row, column, (row * 8) + column
 end
 
 def tests
