@@ -47,6 +47,9 @@ def star_1
 end
 
 def star_2
+  all_seats = (95..838).to_a
+  seats = INPUT.map {|bp| find_seat(bp)[2]}.sort
+  p (all_seats - seats)
 end
 
 tests
