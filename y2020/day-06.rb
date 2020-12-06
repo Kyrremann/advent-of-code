@@ -6,7 +6,7 @@ File.readlines('input/day-06.txt').each do |line|
 end
 
 def star_1
-  p INPUT.join('-').split('--').sum {|g| g.gsub('-', '').chars.sort.uniq.join.length}
+  p INPUT.join('-').split('--').sum {|g| g.gsub('-', '').chars.uniq.count}
 end
 
 def star_2
