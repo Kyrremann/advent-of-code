@@ -10,6 +10,11 @@ def star_1
 end
 
 def star_2
+  p INPUT.join('-').split('--').sum {|g|
+    group_size = g.split('-').length
+    group_answers = g.gsub('-', '')
+    group_answers.chars.group_by(&:itself).map {|letter, list| [letter, list.count]}.select{|g| g[1] >= group_size}.count
+  }
 end
 
 star_1
