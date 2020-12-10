@@ -37,9 +37,23 @@ def star_1
   p "The jolference is #{jolference(INPUT)}"
 end
 
+def count(jolts, index, permutations)
+  return 0 unless (jolts.length > index && (1..3).include?(jolts[index] - jolts.first))
+  permutations[jolts.length - index] ||= kolter(jolts.drop(index), permutations)
+  return permutations[jolts.length - index]
+end
+
+def kolter(jolts, permutations)
+  return 1 if jolts.length == 1
+  count(jolts,1,permutations) +
+    count(jolts,2,permutations) +
+    count(jolts,3,permutations)
 end
 
 def star_2
+  p kolter(joltare(TEST_INPUT), []) == 8
+  p kolter(joltare(TEST_INPUT_2), []) == 19208
+  p "There is #{kolter(joltare(INPUT), [])} total distinct ways"
 end
 
 star_1
