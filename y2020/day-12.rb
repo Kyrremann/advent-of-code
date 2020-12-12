@@ -7,7 +7,24 @@ end
 
 TEST_INPUT = %w(F10 N3 F7 R90 F11)
 
+module Movable
+  def move(direction, value)
+    case direction
+    when 'N'
+     @y += value
+    when 'E'
+     @x += value
+    when 'S'
+     @y -= value
+    when 'W'
+     @x -= value
+    end
+  end
+end
+
 class Boat
+  include Movable
+
   def initialize(facing, x, y)
     @direction = facing
     @x = x
@@ -35,19 +52,6 @@ class Boat
       right(value)
     else
       move(action, value)
-    end
-  end
-
-  def move(direction, value)
-    case direction
-    when 'N'
-     @y += value
-    when 'E'
-     @x += value
-    when 'S'
-     @y -= value
-    when 'W'
-     @x -= value
     end
   end
 
