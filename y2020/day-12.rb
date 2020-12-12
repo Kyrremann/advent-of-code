@@ -70,9 +70,11 @@ end
 
 def star_1
   boat = Boat.new('E', 0, 0)
-  p "The test boat should move 25: #{TEST_INPUT.each {|i| boat.direction(i)}.count == 25}"
+  TEST_INPUT.each {|i| boat.direction(i)}
+  p "The test boat should move 25: #{boat.count == 25}"
   boat = Boat.new('E', 0, 0)
-  p "The boat moved #{INPUT.each {|i| boat.direction(i)}.count}"
+  INPUT.each {|i| boat.direction(i)}
+  p "The boat moved #{boat.count}"
 end
 
 def star_2
