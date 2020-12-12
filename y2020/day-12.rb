@@ -8,10 +8,10 @@ end
 TEST_INPUT = %w(F10 N3 F7 R90 F11)
 
 class Boat
-  def initialize(facing)
+  def initialize(facing, x, y)
     @direction = facing
-    @x = 0
-    @y = 0
+    @x = x
+    @y = y
   end
 
   def dir_to_int(dir)
@@ -69,13 +69,10 @@ class Boat
 end
 
 def star_1
-  boat = Boat.new('E')
-  TEST_INPUT.each {|i| boat.direction(i)}
-  p "The test boat should move 25: #{boat.count == 25}"
-  boat = Boat.new('E')
-  INPUT.each {|i| boat.direction(i)}
-  p boat
-  p boat.count
+  boat = Boat.new('E', 0, 0)
+  p "The test boat should move 25: #{TEST_INPUT.each {|i| boat.direction(i)}.count == 25}"
+  boat = Boat.new('E', 0, 0)
+  p "The boat moved #{INPUT.each {|i| boat.direction(i)}.count}"
 end
 
 def star_2
