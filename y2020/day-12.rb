@@ -10,7 +10,8 @@ TEST_INPUT = %w(F10 N3 F7 R90 F11)
 class Boat
   def initialize(facing)
     @direction = facing
-    @positions = [0, 0, 0, 0]
+    @x = 0
+    @y = 0
   end
 
   def dir_to_int(dir)
@@ -38,8 +39,16 @@ class Boat
   end
 
   def move(direction, value)
-    pos = dir_to_int(direction)
-    @positions[pos] += value
+    case direction
+    when 'N'
+     @y += value
+    when 'E'
+     @x += value
+    when 'S'
+     @y -= value
+    when 'W'
+     @x -= value
+    end
   end
 
   def left(value)
@@ -55,7 +64,7 @@ class Boat
   end
 
   def count
-    (@positions[0] - @positions[2]).abs + (@positions[1] - @positions[3]).abs
+    @x.abs + @y.abs
   end
 end
 
