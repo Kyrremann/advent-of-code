@@ -19,8 +19,8 @@ class Boat
   end
 
   def int_to_dir(int)
-    int = int.abs
     int -= 4 if int > 3
+    int += 4 if int < 0
     ['N', 'E', 'S', 'W'][int]
   end
 
