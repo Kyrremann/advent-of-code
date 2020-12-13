@@ -29,7 +29,26 @@ def star_1
   p "Magic test number is: #{bus_calculator(INPUT.first, input)}"
 end
 
+def validate(timestamp, rest, order)
+  return validate(timestamp, rest[1..-1], order+1.0) if rest.first == 'x'
+  return true if rest.empty?
+  return false if ((timestamp-order)/rest.first) % 1 != 0
+  validate(timestamp, rest[1..-1], order+1.0)
+end
+
+def calc(timestamp, first, rest)
+  while true do
+    return timestamp - (rest.length) if validate(timestamp, rest, 1.0)
+    timestamp += first
+  end
+end
+
 def star_2
+  (1...TEST_INPUT.length).each do |i|
+    input = TEST_INPUT[i].first.reverse
+    p "Calculating test data is working #{calc(0, input.first, input[1..-1]) == TEST_INPUT[i].last}"
+    end
+  #p calc(100_000_000_000_001-INPUT.last.first, INPUT.last.first, INPUT.last[1..-1])
 end
 
 star_1
