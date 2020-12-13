@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-INPUT = File.read('input/day-11.txt').split("\n").join
+INPUT = File.read('input/day-11.txt').split("\n").map {|l| l.chars}
 
 TEST_INPUT = '''L.LL.LL.LL
 LLLLLLL.LL
@@ -11,62 +11,48 @@ L.LLLLL.LL
 ..L.L.....
 LLLLLLLLLL
 L.LLLLLL.L
-L.LLLLL.LL'''.split("\n").join
-def around(c, i, input, row_size)
-  group = []
-  range = 3
-  if i%row_size==0 || i%row_size==9# første eller siste object per linje
-    range = 2
-  end
+L.LLLLL.LL'''.split("\n").map {|l| l.chars}
 
-  unless i%row_size==0
-    i = i-1
-  end
+def around(input, x, y)
+  possible = []
+  possible << input[y-1][x] if y > 0
+  possible << input[y-1][x-1] if y > 0 && x > 0
+  possible << input[y-1][x+1] if y > 0 && x < input[y].length-1
 
-  if i < row_size # first row
-    group = (input[i, range] + input[i+row_size, range])
-  elsif i > input.length - row_size # last row
-    group = (input[i-row_size, range] + input[i, range])
-  else
-    group = (input[i-row_size, range] + input[i, range] + input[i+row_size, range])
-  end
-  group.count(c)
+  possible << input[y][x-1] if x > 0
+  possible << input[y][x+1] if x < input[y].length-1
+
+  possible << input[y+1][x] if y < input.length-1
+  possible << input[y+1][x-1] if y < input.length-1 && x > 0
+  possible << input[y+1][x+1] if y < input.length-1 && x < input[y].length-1
+  possible.count('#')
 end
 
-def check(input, row_size)
-  tmp = input.clone
-  #tmp = prepare(tmp, row_size)
-  puts "in #{tmp.scan(/.{98}/)}"
-  changed = false
-  input.chars.each_with_index do |c,i|
-    case c
-    when 'L'
-      if around('#', i, tmp, row_size) == 0
-        input[i] = '#'
-        changed = true
-      end
-    when '#'
-      if around('#', i, tmp, row_size) >= 5
-        input[i] = 'L'
-        changed = true
+def chaos_stabilizer(input)
+  changed = true
+  while changed
+    changed = false
+    input = input.map.with_index do |row, y|
+      row.map.with_index do |c, x|
+        occupied = around(input, x, y)
+        if c == 'L' && occupied == 0
+          changed = true
+          '#'
+        elsif c == '#' && occupied >= 4
+          changed = true
+          'L'
+        else
+          c
+        end
       end
     end
   end
- # puts "out #{input.scan(/.{10}/)}"
-  return input, changed
-end
-
-def chaos_stabilizer(input, row_size)
-  changed = true
-  while changed
-    input, changed = check(input, row_size)
-  end
-  input.count('#')
+  input.sum {|n| n.count('#')}
 end
 
 def star_1
-  p chaos_stabilizer(TEST_INPUT, 10) == 37
-  p chaos_stabilizer(INPUT, 98)
+  p chaos_stabilizer(TEST_INPUT) == 37
+  p chaos_stabilizer(INPUT)
 end
 
 def star_2
