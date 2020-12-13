@@ -6,7 +6,7 @@ File.readlines('input/day-13.txt').each do |line|
   INPUT << line.chomp
 end
 INPUT[0] = INPUT.first.to_i
-INPUT[1] = INPUT.last.split(',').map{|n| n!='x' ? n.to_i : n}
+INPUT[1] = INPUT.last.split(',').map(&:to_i)
 
 TEST_INPUT = [
   [[7, 13, 59, 31, 19], 939],
@@ -25,7 +25,7 @@ end
 
 def star_1
   p "Magic test number is 295: #{bus_calculator(TEST_INPUT.first.last, TEST_INPUT.first.first) == 295}"
-  input = INPUT.last.select{|n| n!='x'}
+  input = INPUT.last.select{|n| n > 0}
   p "Magic test number is: #{bus_calculator(INPUT.first, input)}"
 end
 
@@ -47,7 +47,7 @@ def star_2
   (1...TEST_INPUT.length).each do |i|
     input = TEST_INPUT[i].first.reverse
     p "Calculating test data is working #{calc(0, input.first, input[1..-1]) == TEST_INPUT[i].last}"
-    end
+  end
   #p calc(100_000_000_000_001-INPUT.last.first, INPUT.last.first, INPUT.last[1..-1])
 end
 
