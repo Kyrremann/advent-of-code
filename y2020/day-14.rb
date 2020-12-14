@@ -35,7 +35,30 @@ def star_1
   p "The sum of memory is #{bitmasker(INPUT)}"
 end
 
+def mask(addresses)
+  addresses.map! {|p,v| p.sub('X', v.to_s)}
+  return addresses unless addresses.join.include?('X')
+  mask(addresses.product([0,1]).to_a)
+end
+
+def masker(input)
+  memory = {}
+  input.each do |blob|
+    mask = blob.first
+    blob.last.each do |address, value|
+      address = address.to_s(2).rjust(mask.length, '0').chars.map.with_index {|b,i| mask[i].to_i == 1 ? 1 : mask[i] == 'X' ? 'X' : b}.join
+      mask([address].product([0,1]).to_a).each do |address|
+        memory[address.to_i(2)] = value
+      end
+    end
+  end
+  memory
+end
+
 def star_2
+  test_input = [ ['000000000000000000000000000000X1001X', {42 => 100}], ['00000000000000000000000000000000X0XX', {26 => 1}] ]
+  p "This test should sum to 208: #{masker(test_input).sum {|_,v| v} == 208}"
+  p "The sum of memory is #{masker(INPUT).sum {|_,v| v}}"
 end
 
 star_1
