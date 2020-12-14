@@ -14,8 +14,9 @@ File.read('input/day-14.txt').lines(chomp: true).each do |line|
 end
 
 TEST_INPUT = [
-  'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X',
-  {8 => 11, 7 => 101, 8 => 0}
+  ['XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X', {7 => 101, 8 => 0}],
+  ['000000000000000000000000000000X1001X', {42 => 100}],
+  ['00000000000000000000000000000000X0XX', {26 => 1}]
 ]
 
 def bitmask(mask, memory)
@@ -26,6 +27,7 @@ def bitmasker(input)
   bitmasked = input.map do |blob|
     bitmask(blob.first, blob.last)
   end
+
   memory = {}
   bitmasked.each do |bits|
     bits.each do |k,v|
@@ -35,12 +37,13 @@ def bitmasker(input)
   memory
 end
 
-def star_1
-  bitmask(TEST_INPUT.first, TEST_INPUT.last)
-  p "This is test should sum to 165: #{TEST_INPUT.last.sum {|_,v| v} == 165}"
+def sum_memory(input)
+  bitmasker(input).sum{|_,v| v}
+end
 
-  memory = bitmasker(INPUT)
-  p "The sum of memory #{memory.sum{|_,v| v}}"
+def star_1
+  p "This is test should sum to 216: #{sum_memory(TEST_INPUT) == 216}"
+  p "The sum of memory is #{sum_memory(INPUT)}"
 end
 
 def star_2
