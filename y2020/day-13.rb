@@ -29,26 +29,23 @@ def star_1
   p "Magic test number is: #{bus_calculator(INPUT.first, input)}"
 end
 
-def validate(timestamp, rest, order)
-  return validate(timestamp, rest[1..-1], order+1.0) if rest.first == 'x'
-  return true if rest.empty?
-  return false if ((timestamp-order)/rest.first) % 1 != 0
-  validate(timestamp, rest[1..-1], order+1.0)
-end
+def fun_with_product(input)
+  input = input.map.with_index {|v,i| [v,i]}.select {|id,o|id!=0}
+  timestamp = input.first.first
 
-def calc(timestamp, first, rest)
   while true do
-    return timestamp - (rest.length) if validate(timestamp, rest, 1.0)
-    timestamp += first
+    found = input.select {|id,o| (timestamp+o) % id == 0}.map{|id,o| id}
+    return timestamp if found.length == input.length
+    timestamp += found.inject(:*)
   end
 end
 
 def star_2
   (1...TEST_INPUT.length).each do |i|
-    input = TEST_INPUT[i].first.reverse
-    p "Calculating test data is working #{calc(0, input.first, input[1..-1]) == TEST_INPUT[i].last}"
+    input = TEST_INPUT[i].first.map {|i|i.to_i}
+    p "Calculating test data is working #{fun_with_product(input) == TEST_INPUT[i].last}"
   end
-  #p calc(100_000_000_000_001-INPUT.last.first, INPUT.last.first, INPUT.last[1..-1])
+  p fun_with_product(INPUT.last)
 end
 
 star_1
