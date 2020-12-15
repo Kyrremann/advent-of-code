@@ -25,7 +25,29 @@ def star_1
   p "The 2020th number is #{recursive(INPUT.dup, 2020)}"
 end
 
+def spoken(numbers, th)
+  where = {}
+  numbers.each_with_index {|v,i| where[v] = [i]}
+  spk = numbers.last
+  index = numbers.length
+  while index < th
+    if where[spk].nil? || where[spk].length == 1
+      where[0] = (where[0] || []) << index
+      spk = 0
+    else
+      spk = where[spk][-1] - where[spk][-2]
+      where[spk] = (where[spk] || []) << index
+    end
+    index += 1
+  end
+  spk
+end
+
 def star_2
+  TEST_INPUT.each do |starting_numbers, small_answer, big_answer|
+    p "The 30_000_000th number is #{big_answer}: #{spoken(starting_numbers.dup, 30_000_000) == big_answer}"
+  end
+  p "The 30_000_000th number is #{spoken(INPUT.dup, 30_000_000)}"
 end
 
 star_1
