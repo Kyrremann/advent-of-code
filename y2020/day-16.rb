@@ -23,12 +23,13 @@ RULES = {
   'zone' => -> (value) { (44..290).cover?(value) || (310..974).cover?(value) }
 }
 TICKET = [97,61,53,101,131,163,79,103,67,127,71,109,89,107,83,73,113,59,137,139]
-TICKETS = nil
+tickets = nil
 
 File.read('input/day-16.txt').lines(chomp: true).each do |line|
-  TICKETS << line.split(',').map {|n| n.to_i} if TICKETS
-  TICKETS = [] if line == 'nearby tickets:'
+  tickets << line.split(',').map {|n| n.to_i} if tickets
+  tickets = [] if line == 'nearby tickets:'
 end
+TICKETS = tickets
 
 def not_valid?(value)
   RULES.each do |rule|
@@ -43,7 +44,57 @@ def star_1
   p "Ticket scanning error rate is #{sum}"
 end
 
+def get_valid_tickets(tickets)
+  TICKETS - tickets.select {|tn| tn.select {|n| not_valid?(n)}.any?}
+end
+
+def transform_tickets(tickets)
+  length = tickets.last.length
+  transformed = []
+  (0...length).each do |index|
+    transformed[index] = []
+    tickets.each do |ticket|
+      transformed[index] << ticket.shift
+    end
+  end
+  transformed
+end
+
+def check(tickets, rule, index)
+   tickets.map {|ticket| RULES[rule].(ticket[index]) }
+  true
+end
+
 def star_2
+  tickets = get_valid_tickets(TICKETS)
+  transformed = transform_tickets(tickets)
+
+  rules = {}
+  transformed.each_with_index do |numbers, index|
+    rules[index] = []
+    RULES.keys.each do |rule|
+      if numbers.map {|n| RULES[rule].(n) }.all?
+        rules[index] << rule
+      end
+      rules[index].sort!
+    end
+  end
+
+  fixed = Array.new(rules.keys.length)
+  (1..rules.keys.length).each do |length|
+    rule = rules.select {|k,v| v.length == length}
+    key, values = rule.first
+    fixed[key] = (values-fixed.compact).first
+  end
+
+  multiplier = 1
+  keys = ['departure_location', 'departure_station', 'departure_platform', 'departure_track', 'departure_date', 'departure_time']
+  fixed.each_with_index do |rule, index|
+    if keys.include?(rule)
+      multiplier *= TICKET[index]
+    end
+  end
+  p "My multiplier is #{multiplier}"
 end
 
 star_1
