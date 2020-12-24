@@ -41,7 +41,10 @@ def rpn(input, precedence, associativity)
       operators.pop if operators.last == "("
     end
   end
-  output.concat(operators)
+  while operators.any?
+    output << operators.pop
+  end
+
   output
 end
 
