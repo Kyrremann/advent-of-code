@@ -14,7 +14,10 @@ TEST_INPUT = [
   ["((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 13632]
 ]
 
-def rpn(input)
+LEFT = 0
+RIGHT = 1
+
+def rpn(input, precedence, associativity)
   output = []
   operators = []
   input.each do |n|
@@ -22,15 +25,13 @@ def rpn(input)
     when /[0-9]/
       output << n.to_i
     when /[+*]/
-      if operators.empty?
-        operators << n
-      else
-        while operators.last != "(" and
-             not operators.empty? do
-          output << operators.pop
-        end
-        operators << n
+      while ((not operators.empty?) &&
+             (operators.last != "(") &&
+             ((precedence[operators.last] > precedence[n]) ||
+              (precedence[operators.last] == precedence[n] && associativity[n] == LEFT))) do
+        output << operators.pop
       end
+      operators << n
     when /\(/
       operators << n
     when /\)/
@@ -59,19 +60,21 @@ def evaluate_rpn(expression)
   stack.pop
 end
 
-def math(input)
+def simple_math(input)
   input = input.split.map {|i| i.split(/(\(|\))/)}.flatten.reject { |c| c.empty? }
-  expression = rpn(input)
+  precedence = {"+" => 1, "*" => 1}
+  associativity = {"+" => LEFT, "*" => LEFT}
+  expression = rpn(input, precedence, associativity)
   evaluate_rpn(expression)
 end
 
 def star_1
   TEST_INPUT.each do |input|
-    output = math(input.first)
+    output = simple_math(input.first)
     p "#{input.first} = #{output} is #{output == input.last}"
   end
 
-  p "All together #{INPUT.sum { |input| math(input) }}"
+  p "All together #{INPUT.sum { |input| simple_math(input) }}"
 end
 
 def star_2
