@@ -71,9 +71,9 @@ def count_surrounding_black_tiles(tiles, coord)
   COORDS.values.count {|v| black?(tiles[[coord[0]+v[0], coord[1]+v[1]]])}
 end
 
-def flip_tile(tiles, tmp, tile, tile_color)
+def flip_tile(tiles, tmp, tile)
   blacks = count_surrounding_black_tiles(tmp, tile)
-  if black?(tile_color)
+  if black?(tmp[tile])
     tiles[tile] = WHITE if blacks == 0 || blacks > 2
   else
     tiles[tile] = BLACK if blacks == 2
@@ -84,16 +84,19 @@ def flip(tiles)
   tmp = tiles.clone
   tmp.each do |tile, color|
     coords = COORDS.map {|k,c| [tile[0]+c[0], tile[1]+c[1]]}.append(tile)
-    coords.each {|coord| flip_tile(tiles, tmp, coord, color)}
+    coords.each {|coord| flip_tile(tiles, tmp, coord)}
   end
   tiles
 end
 
 def star_2
   tiles = get_movements(TEST_INPUT)
-  p ["tiles", tiles.count, "black", count_black_tiles(tiles)]
-  tiles = flip(tiles)
-  p ["tiles", tiles.count, "black", count_black_tiles(tiles)]
+  100.times {|i| tiles = flip(tiles)}
+  p "After 100 times there are #{count_black_tiles(tiles)} black tiles"
+
+  tiles = get_movements(INPUT)
+  100.times {|i| tiles = flip(tiles)}
+  p "After 100 times there are #{count_black_tiles(tiles)} black tiles"
 end
 
 star_1
