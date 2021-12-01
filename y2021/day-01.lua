@@ -1,7 +1,7 @@
 function lines_from(filename)
    lines = {}
    for line in io.lines(filename) do 
-      lines[#lines + 1] = line
+      lines[#lines + 1] = tonumber(line)
    end
    return lines
 end
