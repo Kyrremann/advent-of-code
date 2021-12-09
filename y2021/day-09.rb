@@ -20,15 +20,20 @@ def around(input, x, y)
   values
 end
 
-def star1(input)
-  marked = []
+def explore(input)
+  locations = []
   input.each_with_index do |row, y|
     row.chars.each_with_index do |column, x|
       values = around(input, x, y)
-      marked << column.to_i if values.all? {|n| n > column }
+      locations << [x,y] if values.all? {|n| n > column }
     end
   end
-  marked.sum {|n| n+1}
+
+  locations
+end
+
+def star1(input)
+  explore(input).map {|loc| x,y = loc; input[y][x].to_i}.sum {|n| n+1}
 end
 
 p star1(test)
