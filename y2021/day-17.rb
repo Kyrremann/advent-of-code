@@ -5,22 +5,8 @@ def gauss(n)
   ((n**2)+n)/2
 end
 
-def calculate_x(range)
-  start = 1
-  while !range.include?(gauss(start)) do
-    start += 1
-  end
-  start
-end
-
-def calculate_y(range)
-  (range.min.abs - 1)
-end
-
 def star1(targetX, targetY)
-  x = calculate_x(targetX)
-  y = calculate_y(targetY)
-  gauss(y)
+  gauss(targetY.min.abs - 1)
 end
 
 p "TEST: highest y position: #{star1(*test)}"
