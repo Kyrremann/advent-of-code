@@ -28,10 +28,10 @@ def star_1(input, row)
   minX = 0
   input.each_line do |line|
     sx, sy, bx, by = line.match(/Sensor at x=(\d+), y=(\d+): closest beacon is at x=(-?\d+), y=(\d+)/).captures.map(&:to_i)
-    
+
     taxicab = (sx-bx).abs + (sy-by).abs
     minX = [minX, sx, bx].min
-    
+
     if sy + taxicab >= row && sy - taxicab <= row
       distance_from_row = (row - sy).abs
       scanned = ((distance_from_row - taxicab).abs * 2) + 1
