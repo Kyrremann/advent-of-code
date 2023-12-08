@@ -40,24 +40,29 @@ humidity-to-location map:
 56 93 4'
 
 class Ranger
-  attr_accessor :dest_start, :dest_end, :src_start, :src_end, :range
+  attr_accessor :dest_start, :dest_end, :src_start, :src_end, :range, :dest, :src
 
   def initialize(dest, src, range)
-    @dest_start = dest
-    @dest_end = dest + range - 1
-    @src_start = src
-    @src_end = src + range - 1
+    @dest = (dest..(dest + range - 1))
+    @src = (src..(src + range - 1))
     @range = range
   end
 
-  def src_to_dest(src)
-    return nil unless src >= @src_start && src <= @src_end
+  def src_range_to_dest(src)
+    return nil unless @src.begin <= src.end && src.begin <= @src.end
 
-    dest_start + (src - @src_start)
+    beginning = [@dest.first + (src.first - @src.first), 0].max
+    (beginning..@dest.last)
+  end
+
+  def src_to_dest(src)
+    return nil unless @src.include?(src)
+
+    dest.first + (src - @src.first)
   end
 
   def to_s
-    "dest: #{@dest_start}-#{@dest_end}, src: #{@src_start}-#{@src_end}, range: #{@range}"
+    "dest: #{@dest}, src: #{@src}, range: #{@range}"
   end
 
   def inspect
@@ -91,15 +96,14 @@ def parse_input(input)
   [seeds, map]
 end
 
-def find_location(map, seed)
+def find_location(map, seed, range: false)
   debug = false
   print "seed #{seed}, " if debug
   needle = seed
   map.each do |label, rangers|
-    next if label == 'seeds'
-
     rangers.each do |ranger|
-      next_needle = ranger.src_to_dest(needle)
+      next_needle = range ? ranger.src_range_to_dest(needle) : ranger.src_to_dest(needle)
+
       if next_needle
         needle = next_needle
         break
@@ -129,14 +133,12 @@ def star2(input)
   (0..tmp.length).step(2).each do |i|
     break if i >= tmp.length
 
-    (tmp[i]..(tmp[i] + tmp[i + 1])).each do |seed|
-      seeds << seed
-    end
+    seeds << (tmp[i]..(tmp[i] + tmp[i + 1]))
   end
 
   seeds.map do |seed|
-    find_location(map, seed)
-  end.min
+    find_location(map, seed, range: true)
+  end.map(&:min).min
 end
 
 p "Test: #{star2(test_input)} == 46"
