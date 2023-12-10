@@ -92,10 +92,40 @@ p "Test: #{star1(test_input, 'F', 'N', 'W')} == 8"
 print 'Star 1: '
 p star1(INPUT, '7', 'N', 'E')
 
-def star2(input)
+test_input = 'FF7FSF7F7F7F7F7F---7
+L|LJ||||||||||||F--J
+FL-7LJLJ||||||LJL-77
+F--JF--7||LJLJ7F7FJ-
+L---JF-JLJ.||-FJLJJ7
+|F|F-JF---7F7-L7L|7|
+|FFJF7L7F-JF7|JL---7
+7-L-JL7||F7|L7F-7F7|
+L.L7LFJ|||||FJL7||LJ
+L7JLJL-JLJLJL--JLJ.L'
+
+def star2(input, start_tile, direction)
+  matrix = input.split(/\n/).map(&:chars)
+
+  sx, sy = find_start(matrix)
+  matrix[sy][sx] = start_tile
+  x = sx
+  y = sy
+
+  loop do
+    nx, ny, direction = move(matrix, x, y, direction)
+    matrix[y][x] = 'X'
+    x = nx
+    y = ny
+    break if x == sx && y == sy
+  end
+
+  matrix.map(&:join).join("\n")
+  matrix.each { |line| p line.join }
+
+  matrix.map(&:join).join("\n").count(' ')
 end
 
-p "Test: #{star2(test_input)} == 46"
+p "Test: #{star2(test_input, '7', 'E')} == 10"
 
 print 'Star 2: '
-p star2(INPUT)
+p star2(INPUT, '7', 'E')
