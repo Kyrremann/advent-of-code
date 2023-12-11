@@ -52,31 +52,21 @@ def find_galaxies(space)
   galaxies
 end
 
-def distance(x, y, finish_x, finish_y)
-  (x - finish_x).abs + (y - finish_y).abs
+def distance(start, finish)
+  (start[0] - finish[0]).abs + (start[1] - finish[1]).abs
 end
 
-def find_shortest_path(index, start, galaxies)
+def find_shortest_path(start, galaxies)
   return 0 if galaxies.nil? || galaxies.empty?
 
-  x, y = start
-
-  galaxies.each_with_index.sum do |galaxy, gnum|
-    finish_x, finish_y = galaxy
-    # p "Start(#{index + 1}): #{start} - Finish(#{index + gnum + 2}): #{galaxy} - Distance: #{distance(x, y, finish_x, finish_y)}"
-    distance(x, y, finish_x, finish_y)
-  end
+  galaxies.sum { |galaxy| distance(start, galaxy) }
 end
 
 def star1(input)
-  # input.split("\n").map(&:chars).each { |line| p line.join }
-  # p '---'
   space = expand_space(input.split("\n").map(&:chars))
-  # index = 0
-  # space.each { |line| p(line.map { |area| area == '.' ? area : index += 1 }.join) }
   galaxies = find_galaxies(space)
   galaxies.each_with_index.sum do |galaxy, index|
-    find_shortest_path(index, galaxy, galaxies[(index + 1)...])
+    find_shortest_path(galaxy, galaxies[(index + 1)...])
   end
 end
 
