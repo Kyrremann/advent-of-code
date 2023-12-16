@@ -29,3 +29,36 @@ p "Test: #{star1(test_input)} == 1320"
 
 print 'Star 1: '
 p star1(INPUT)
+
+def star2(input)
+  input = input.strip.split(',')
+  boxes = Array.new(256) { {} }
+
+  input.each do |v|
+    key, value = v.split('=')
+
+    if value
+      box = boxes.select { |b| b.key?(key) }.first
+      if box
+        box[key] = value
+      else
+        index = hash_it(key, 0)
+        boxes[index] ||= {}
+        boxes[index][key] = value
+      end
+    else
+      key = v.split('-').first
+      box = boxes.select { |b| b.key?(key) }.first
+      box&.delete(key)
+    end
+  end
+
+  boxes.each_with_index.reject { |box, _| box.empty? }.sum do |box, index|
+    box.map { |_, value| value.to_i }.each_with_index.sum { |value, i| (1 + index) * (i + 1) * value }
+  end
+end
+
+p "Test: #{star2(test_input)} == 145"
+
+print 'Star 2: '
+p star2(INPUT)
