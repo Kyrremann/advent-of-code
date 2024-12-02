@@ -1,4 +1,7 @@
-input_file = "input/#{File.basename(__FILE__).split('.').first}.txt"
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+input_file = "input/#{File.basename(__FILE__).match(/\d\d?/)[0]}"
 
 INPUT = File.read(input_file) if File.exist?(input_file)
 
