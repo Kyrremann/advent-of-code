@@ -145,11 +145,49 @@ def star1(input, debug = false)
   end
 end
 
-p "Test: #{star1(test_input, true)} == 18"
+p "Test: #{star1(test_input)} == 18"
 p "Star 1: #{star1(INPUT)}"
-#
-# def star2(input)
-# end
-#
-# p "Test: #{star2(test_input)} == 31"
-# p "Star 2: #{star2(INPUT)}"
+
+def star2(input, debug = false)
+  def xmas(input, y, x, debug = false)
+    # A is here y, x
+    # M.S -1,-1 . -1,+1
+    # .A.       0
+    # M.S +1,-1   +1,+1
+
+    return 0 if y == 0 || y + 1 == input.length
+    return 0 if x == 0 || x + 1 == input[y].length
+
+    if ([
+      input[y - 1][x - 1] == 'M' &&
+        input[y + 1][x + 1] == 'S',
+
+      input[y - 1][x + 1] == 'M' &&
+        input[y + 1][x - 1] == 'S',
+
+      input[y - 1][x - 1] == 'S' &&
+        input[y + 1][x + 1] == 'M',
+
+      input[y - 1][x + 1] == 'S' &&
+        input[y + 1][x - 1] == 'M'
+    ].count { |v| v }) == 2
+      1
+    else
+      0
+    end
+  end
+
+  input = input.split("\n")
+  (0...input.length).sum do |y|
+    print y, ': ', input[y], "\n" if debug
+
+    (0...input[y].length).sum do |x|
+      next 0 unless input[y][x] == 'A'
+
+      xmas(input, y, x, debug)
+    end
+  end
+end
+
+p "Test: #{star2(test_input)} == 9"
+p "Star 2: #{star2(INPUT)}"
