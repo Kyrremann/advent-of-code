@@ -16,148 +16,133 @@ SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX'
 
-def horizontal(input)
-  count = 0
+def xmas_horizontal(line, debug = false)
+  horizontal = 0
+  index = 0
 
-  input.split("\n").each do |line|
-    index = 0
-    while matchdata = line.match(/XMAS|SAMX/, index)
-      index = matchdata.begin(0) + 1
-      count += 1
-    end
+  while matchdata = line.match(/XMAS|SAMX/, index)
+    index = matchdata.begin(0) + 1
+    horizontal += 1
   end
 
-  count
+  horizontal
 end
 
-def vertical(input)
-  def xmas(input, y, x)
-    # Down
-    xmas = %w[S A M X]
-    down = (y...input.length).sum do |yy|
-      next_char = xmas.pop
-      break 1 unless next_char
+def xmas(input, y, x, debug = false)
+  # Down
+  xmas = %w[S A M X]
+  down = (y...input.length).sum do |yy|
+    next_char = xmas.pop
+    break 1 unless next_char
 
-      break 0 if input[yy][x] != next_char
+    print yy, ': ', input[yy], ', ', next_char, '=', input[yy][x], "\n" if debug && y == 6
 
-      0
-    end
+    break 0 if input[yy][x] != next_char
+    break 1 if xmas.empty?
 
-    # Up
-    xmas = %w[S A M X]
-    up = y.downto(0).sum do |yy|
-      next_char = xmas.pop
-      break 1 unless next_char
-
-      break 0 if input[yy][x] != next_char
-
-      0
-    end
-
-    up + down
+    0
   end
 
-  input = input.split("\n")
-  (0...input.length).sum do |y|
-    (0...input[y].length).sum do |x|
-      next 0 unless input[y][x] == 'X'
+  # Up
+  xmas = %w[S A M X]
+  up = y.downto(0).sum do |yy|
+    next_char = xmas.pop
+    break 1 unless next_char
 
-      xmas(input, y, x)
-    end
+    break 0 if input[yy][x] != next_char
+    break 1 if xmas.empty?
+
+    0
   end
+
+  # Down left
+  xmas = %w[S A M X]
+  xx = x
+  dl = if x < xmas.length - 1
+         0
+       else
+         (y...input.length).sum do |yy|
+           next_char = xmas.pop
+           break 1 unless next_char
+
+           break 0 if input[yy][xx] != next_char
+           break 1 if xmas.empty?
+
+           xx -= 1
+           0
+         end
+       end
+
+  # Down right
+  xmas = %w[S A M X]
+  xx = x
+  dr = if x > input[y].length - xmas.length
+         0
+       else
+         (y...input.length).sum do |yy|
+           next_char = xmas.pop
+           break 1 unless next_char
+
+           break 0 if input[yy][xx] != next_char
+           break 1 if xmas.empty?
+
+           xx += 1
+           0
+         end
+       end
+
+  # Up left
+  xmas = %w[S A M X]
+  xx = x
+  ul = if x < xmas.length - 1
+         0
+       else
+         y.downto(0).sum do |yy|
+           next_char = xmas.pop
+           break 1 unless next_char
+
+           break 0 if input[yy][xx] != next_char
+           break 1 if xmas.empty?
+
+           xx -= 1
+           0
+         end
+       end
+
+  # Up right
+  xmas = %w[S A M X]
+  xx = x
+  ur = if x > input[y].length - xmas.length
+         0
+       else
+         y.downto(0).sum do |yy|
+           next_char = xmas.pop
+           break 1 unless next_char
+
+           break 0 if input[yy][xx] != next_char
+           break 1 if xmas.empty?
+
+           xx += 1
+           0
+         end
+       end
+
+  print "\t", x, ': ', { up:, down:, dl:, dr:, ul:, ur: }, "\n" if debug
+  [up, down, dl, dr, ul, ur].sum
 end
 
-def diagonal(input, debug = false)
-  def xmas(input, y, x, debug)
-    # Down left
-    xmas = %w[S A M X]
-    xx = x
-    dl = if x < xmas.length - 1
-           0
-         else
-           (y...input.length).sum do |yy|
-             next_char = xmas.pop
-             break 1 unless next_char
-
-             break 0 if input[yy][xx] != next_char
-
-             xx -= 1
-             0
-           end
-         end
-
-    # Down right
-    xmas = %w[S A M X]
-    xx = x
-    dr = if x > input[y].length - xmas.length
-           0
-         else
-           (y...input.length).sum do |yy|
-             next_char = xmas.pop
-             break 1 unless next_char
-
-             break 0 if input[yy][xx] != next_char
-
-             xx += 1
-             0
-           end
-         end
-
-    # Up left
-    xmas = %w[S A M X]
-    xx = x
-    ul = if x < xmas.length - 1
-           0
-         else
-           y.downto(0).sum do |yy|
-             next_char = xmas.pop
-             break 1 unless next_char
-
-             break 0 if input[yy][xx] != next_char
-
-             xx -= 1
-             0
-           end
-         end
-
-    # Up right
-    xmas = %w[S A M X]
-    xx = x
-    ur = if x > input[y].length - xmas.length
-           0
-         else
-           y.downto(0).sum do |yy|
-             next_char = xmas.pop
-             break 1 unless next_char
-
-             break 0 if input[yy][xx] != next_char
-
-             xx += 1
-             0
-           end
-         end
-
-    print x, ': ', [dl, dr, ul, ur], "\n" if debug
-    dl + dr + ul + ur
-  end
-
+def star1(input, debug = false)
   input = input.split("\n")
   (0...input.length).sum do |y|
-    print y, ': ', input[y], "\n" if debug
-    (0...input[y].length).sum do |x|
+    horizontal = xmas_horizontal(input[y], debug)
+    print y, ': ', input[y], ', H: ', horizontal, "\n" if debug
+
+    horizontal + (0...input[y].length).sum do |x|
       next 0 unless input[y][x] == 'X'
 
       xmas(input, y, x, debug)
     end
   end
-end
-
-def star1(input, debug = false)
-  [
-    horizontal(input),
-    vertical(input),
-    diagonal(input, debug)
-  ].sum
 end
 
 p "Test: #{star1(test_input, true)} == 18"
