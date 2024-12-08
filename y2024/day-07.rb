@@ -28,74 +28,52 @@ def star1(input, debug = false)
     eval = row[0].to_i
     numbers = row[1].split.map(&:to_i)
 
-    print eval, ': ', numbers, ' -- ', Time.now, "\n"
-    operators = []
-
-    (0...numbers.length).each do |i|
-      operators << '+' * i + '*' * (numbers.length - 1 - i)
+    if debug
+      p Time.now
+      print eval, ': ', numbers, "\n"
     end
 
-    print 'Operators: ', operators, "\n"
+    def tree(eval, numbers)
+      return eval == numbers.first if numbers.size == 1
 
-    def is_true(operators, numbers, eval, debug)
-      operators.map do |op|
-        print 'Checking: ', op, "\n" if debug
-        if op.chars.all? { |x| x == op[0] }
-          return true if eval == case op[0]
-                                 when '*'
-                                   numbers.reduce(&:*)
-                                 when '+'
-                                   numbers.reduce(&:+)
-                                 end
-        else
-          op.chars.permutation.map do |perm|
-            print 'Permutation: ', perm if debug
+      n = numbers.pop
+      s = numbers.pop
 
-            cp = numbers.map(&:clone)
-            perm.each_with_index do |op, i|
-              cp.insert(i + i + 1, op)
-            end
-            print ' -> ', cp, "\n" if debug
-
-            def math(values, debug = false)
-              p values if debug
-              while values.length > 1
-                first = values.pop.to_i
-                op = values.pop
-                second = values.pop.to_i
-
-                output = case op
-                         when '*'
-                           first * second
-                         when '+'
-                           first + second
-                         end
-
-                print first, op, second, '=', output, "\n" if debug
-                values.append(output)
-                p values if debug
-              end
-              values.first
-            end
-
-            return true if math(cp.reverse, debug) == eval
-          end
-        end
-
-        p 'Not valid' if debug
-      end
-      false
+      tree(eval, numbers + [(n + s)]) || tree(eval, numbers + [(n * s)])
     end
 
-    is_true(operators, numbers, eval, debug)
+    tree(eval, numbers.reverse)
   end.map { |row| row[0].to_i }.sum
 end
 
 p "Test: #{star1(test_input, true)} == 3749"
 p "Star 1: #{star1(INPUT)}"
 
-# def star2(input)
-# end
-#
-# p "Test: #{star2(test_input)} == x"
-# p "Star 2: #{star2(INPUT)}"
+def star2(input, debug = false)
+  input = format(input)
+  input.select do |row|
+    eval = row[0].to_i
+    numbers = row[1].split.map(&:to_i)
+
+    if debug
+      p Time.now
+      print eval, ': ', numbers, "\n"
+    end
+
+    def tree(eval, numbers)
+      return eval == numbers.first if numbers.size == 1
+
+      n = numbers.pop
+      s = numbers.pop
+
+      tree(eval, numbers + [(n + s)]) ||
+        tree(eval, numbers + [(n * s)]) ||
+        tree(eval, numbers + ["#{n}#{s}".to_i])
+    end
+
+    tree(eval, numbers.reverse)
+  end.map { |row| row[0].to_i }.sum
+end
+
+p "Test: #{star2(test_input, true)} == 11387"
+p "Star 2: #{star2(INPUT)}"
