@@ -185,8 +185,99 @@ p "Test: #{star1(test_input, debug)} == 2028"
 p "Test: #{star1(big_input, debug)} == 10092"
 p "Star 1: #{star1(INPUT)}"
 
-# def star2(input, debug = false)
-# end
-#
-# p "Test: #{star2(test_input, true)} == x"
+small_input = '#######
+#...#.#
+#.....#
+#..OO@#
+#..O..#
+#.....#
+#######
+
+<vv<<^^<<^^'
+
+class Wile
+  attr_accessor :tile, :y, :x, :rx
+
+  def initialize(tile, y, x)
+    @tile = tile
+    @y = y
+    @x = x
+    return unless tile == 'O'
+
+    @rx = x + 1
+    @tile = '[]'
+  end
+
+  def to_s
+    "#{@y},#{@x}: #{tile}"
+  end
+end
+
+def format(input)
+  warehouse, movements = input.split("\n\n")
+  warehouse = warehouse.split("\n")
+
+  map = Matrix.new(warehouse.length, warehouse[0].length * 2, true)
+  start = nil
+
+  (0...warehouse.length).each do |y|
+    (0...warehouse[y].length).each do |x|
+      tile = warehouse[y][x]
+      next start = Tile.new(y, x) if tile == '@'
+      next if tile == '.'
+
+      wile = Wile.new(tile, y, x)
+      map[y, x] = wile
+      map[y, wile.rx] = wile if wile.rx
+    end
+  end
+
+  [map, movements.split("\n").join.reverse.chars, start]
+end
+
+def star2(input, debug = false)
+  map, movements, start = format(input)
+  p movements.reverse if debug
+  while move = movements.pop
+
+    print move, ': ', start if debug
+
+    case move
+    when '^'
+      ny = start.y - 1
+      if map[ny, start.x] != '#'
+        shift(map, ny, start.x, move) if map[ny, start.x] == 'O'
+        start.y = ny unless map[ny, start.x]
+      end
+    when '>'
+      nx = start.x + 1
+      if map[start.y, nx] != '#'
+        shift(map, start.y, nx, move) if map[start.y, nx] == 'O'
+        start.x = nx unless map[start.y, nx]
+      end
+    when '<'
+      nx = start.x - 1
+      if map[start.y, nx] != '#'
+        shift(map, start.y, nx, move) if map[start.y, nx] == 'O'
+        start.x = nx unless map[start.y, nx]
+      end
+    when 'v'
+      ny = start.y + 1
+      if map[ny, start.x] != '#'
+        shift(map, ny, start.x, move) if map[ny, start.x] == 'O'
+        start.y = ny unless map[ny, start.x]
+      end
+    end
+
+    print ' -> ', start, "\n" if debug
+
+    puts "Move #{move}:" if debug
+    map.draw(start) if debug
+    puts '' if debug
+  end
+
+  map.sum
+end
+
+p "Test: #{star2(small_input, true)} == 105"
 # p "Star 2: #{star2(INPUT)}"
