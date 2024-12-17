@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'ruby2d'
+
 input_file = "input/#{File.basename(__FILE__).match(/\d\d?/)[0]}"
 
 INPUT = File.read(input_file) if File.exist?(input_file)
@@ -80,7 +82,9 @@ def star2(input, debug = false)
 
   min = -1
 
-  10_000.times do |i|
+  offset = 0
+
+  10_000.times do |frame|
     value, robots = calc(robots, wide, tall)
     min = value if min == -1
 
@@ -94,9 +98,32 @@ def star2(input, debug = false)
       grid[y][x] = 'X'
     end
 
-    p i
-    grid.each { |row| p row.join }
+    p frame
+    size = 1
+    (0...grid.length).each do |y|
+      (0...grid[y].length).each do |x|
+        next if grid[y][x] == '.'
+
+        Square.new(
+          x: offset + x, y: y,
+          size: size,
+          color: 'green'
+        )
+      end
+    end
+
+    Text.new(
+      'Frame: ' + frame.to_s,
+      x: offset, y: tall,
+      size: 10,
+      color: 'green'
+    )
+
+    offset += wide + 10
+    # grid.each { |row| p row.join }
   end
+
+  show
 end
 
 # p "Test: #{star2(test_input, true)} == x"
