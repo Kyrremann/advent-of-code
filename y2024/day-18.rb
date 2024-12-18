@@ -79,39 +79,19 @@ def star2(input, size, bytes, debug = false)
   graph = Dijkstra::Trace.new(edges)
   path = graph.path([0, 0], [size - 1, size - 1])
 
-  puts "The shortest distance between #{path.starting_point} and #{path.ending_point} is #{path.distance} units"
-  puts "The shortest path: #{path.path}"
+  leftovers.each do |byte|
+    edges.reject! { |edge| edge.include?(byte) }
 
-  jump = 0
-  leftovers.each_with_index do |byte, index|
-    p "Checking: #{index + bytes}"
-    if path.path.include?(byte)
-      edges.reject! { |edge| edge.include?(byte) }
-    else
-      x, y = byte
-      edges << [byte, [x, y - 1], 1] if y > 0
-      edges << [byte, [x, y + 1], 1] if y < size
-      edges << [byte, [x - 1, y], 1] if x > 0
-      edges << [byte, [x + 1, y], 1] if x < size
-    end
+    next unless path.path.include?(byte)
 
-    # p "Another byte(#{byte}) has fallen!" if debug
-
-    # next if (jump += 1) < 100
+    p "Building ny graph, #{byte} is blocking"
 
     graph = Dijkstra::Trace.new(edges)
     path = graph.path([0, 0], [size - 1, size - 1])
-    # if debug
-    #   puts "The shortest distance between #{path.starting_point} and #{path.ending_point} is #{path.distance} units"
-    #   puts "The shortest path: #{path.path}"
-    # end
 
     return byte if path.distance == 9_999_999
-
-    jump = 0
   end
 end
 
 p "Test: #{star2(test_input, 7, 12, true)} == [6, 1]"
-# p "Star 2: #{star2(INPUT, 71, 1024)}"
-p "Star 2: #{star2(INPUT, 71, 3023 - 200)}"
+p "Star 2: #{star2(INPUT, 71, 1024)}"
