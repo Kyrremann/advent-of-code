@@ -116,8 +116,90 @@ p "Test: #{star1(test_input, debug)} == 4"
 p "Test: #{star1(test_big, debug)} == 2024"
 p "Star 1: #{star1(INPUT)}"
 
-# def star2(input, debug = false)
-# end
+test_input = 'x00: 0
+x01: 1
+x02: 0
+x03: 1
+x04: 0
+x05: 1
+y00: 0
+y01: 0
+y02: 1
+y03: 1
+y04: 0
+y05: 1
 
-# p "Test: #{star2(test_input, true)} == 23"
-# p "Star 2: #{star2(INPUT)}"
+x00 AND y00 -> z05
+x01 AND y01 -> z02
+x02 AND y02 -> z01
+x03 AND y03 -> z03
+x04 AND y04 -> z04
+x05 AND y05 -> z00'
+
+def star2(input, debug = false)
+  _, gates = input.split("\n\n")
+  operations = {}
+  gates = gates.split("\n").map { |gate| gate.split(' -> ') }
+  gates.each { |gate, output| operations[output] = gate }
+  operations = operations.sort.to_h
+
+  # gates.each do |input, output|
+  #   a, op, b = input.split
+  #   next unless output.start_with?('z')
+  #
+  #   print a, '(', operations[a], ') ', op, ' ', b, '(', operations[b], ') = ', output, "\n"
+  # end
+
+  def txt(operations, gate)
+    if gate.start_with?('x') || gate.start_with?('y')
+      print gate
+    else
+      a, op, b = gate.split
+      txt(operations, operations[a])
+      print ' ', op, "\n "
+      txt(operations, operations[b])
+    end
+  end
+
+  operations.each do |key, gate|
+    # print key, ' -> ', gate, "\n"
+    next unless key.start_with?('z')
+
+    print key, ' -> '
+    txt(operations, gate)
+    print "\n\n"
+    # if gate.start_with?('x') || gate.start_with?('y')
+    #   print gate, "\n"
+    #   next
+    # else
+    #   a, op, b = gate.split
+    #
+    #   # print operations[a], ' ', op, ' ', operations[b], "\n"
+    # end
+
+    next
+
+    def some(operations, key, a, op, b)
+      if a.start_with?('x') || a.start_with?('y')
+        p a, b
+        operations[key] = "(#{operations[a]} #{op} #{operations[b]})"
+      else
+        print 'go deeper, ', a, ' ', op, ' ', b, "\n"
+
+        aa, aop, ab = operations[a].split
+        some(operations, a, aa, aop, ab)
+
+        ba, bop, bb = operations[b].split
+        some(operations, a, ba, bop, bb)
+      end
+    end
+
+    a, op, b = gate.split
+    some(operations, key, a, op, b)
+  end
+
+  0
+end
+
+p "Test: #{star2(test_input, false)} == z00,z01,z02,z05" if false
+p "Star 2: #{star2(INPUT)}"
