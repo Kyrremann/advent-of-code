@@ -86,14 +86,19 @@ def simulate(wires, gate, debug = false)
   true
 end
 
-def star1(input, debug = false)
+def format(input)
   init_wires, gates = input.split("\n\n")
   wires = {}
   init_wires.split("\n").each do |w|
     k, v = w.split(': ')
     wires[k] = v.to_i
   end
-  gates = gates.split("\n").map(&:split)
+
+  [wires, gates.split("\n").map(&:split)]
+end
+
+def star1(input, debug = false)
+  wires, gates = format(input)
 
   p wires, gates if debug
 
@@ -106,8 +111,9 @@ def star1(input, debug = false)
   wires.select { |k, v| k.start_with?('z') }.sort.map(&:last).join.reverse.to_i(2)
 end
 
-p "Test: #{star1(test_input, true)} == 4"
-p "Test: #{star1(test_big, true)} == 2024"
+debug = false
+p "Test: #{star1(test_input, debug)} == 4"
+p "Test: #{star1(test_big, debug)} == 2024"
 p "Star 1: #{star1(INPUT)}"
 
 # def star2(input, debug = false)
