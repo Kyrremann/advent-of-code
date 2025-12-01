@@ -90,8 +90,8 @@ def format(input)
   init_wires, gates = input.split("\n\n")
   wires = {}
   init_wires.split("\n").each do |w|
-    k, v = w.split(': ')
-    wires[k] = v.to_i
+    k, pins = w.split(': ')
+    wires[k] = pins.to_i
   end
 
   [wires, gates.split("\n").map(&:split)]
@@ -107,8 +107,8 @@ def star1(input, debug = false)
     gates.prepend(gate) unless simulate(wires, gate, debug)
   end
 
-  p wires.select { |k, v| k.start_with?('z') }.sort.map(&:last).join.reverse if debug
-  wires.select { |k, v| k.start_with?('z') }.sort.map(&:last).join.reverse.to_i(2)
+  p wires.select { |k, pins| k.start_with?('z') }.sort.map(&:last).join.reverse if debug
+  wires.select { |k, pins| k.start_with?('z') }.sort.map(&:last).join.reverse.to_i(2)
 end
 
 debug = false
@@ -143,59 +143,18 @@ def star2(input, debug = false)
   gates.each { |gate, output| operations[output] = gate }
   operations = operations.sort.to_h
 
-  # gates.each do |input, output|
-  #   a, op, b = input.split
-  #   next unless output.start_with?('z')
-  #
-  #   print a, '(', operations[a], ') ', op, ' ', b, '(', operations[b], ') = ', output, "\n"
-  # end
-
-  def txt(operations, gate)
-    if gate.start_with?('x') || gate.start_with?('y')
-      print gate
-    else
-      a, op, b = gate.split
-      txt(operations, operations[a])
-      print ' ', op, "\n "
-      txt(operations, operations[b])
-    end
-  end
-
   operations.each do |key, gate|
+    next if gate.start_with?('x') || gate.start_with?('y')
+
     # print key, ' -> ', gate, "\n"
-    next unless key.start_with?('z')
-
-    print key, ' -> '
-    txt(operations, gate)
-    print "\n\n"
-    # if gate.start_with?('x') || gate.start_with?('y')
-    #   print gate, "\n"
-    #   next
-    # else
-    #   a, op, b = gate.split
-    #
-    #   # print operations[a], ' ', op, ' ', operations[b], "\n"
-    # end
-
-    next
-
-    def some(operations, key, a, op, b)
-      if a.start_with?('x') || a.start_with?('y')
-        p a, b
-        operations[key] = "(#{operations[a]} #{op} #{operations[b]})"
-      else
-        print 'go deeper, ', a, ' ', op, ' ', b, "\n"
-
-        aa, aop, ab = operations[a].split
-        some(operations, a, aa, aop, ab)
-
-        ba, bop, bb = operations[b].split
-        some(operations, a, ba, bop, bb)
-      end
+    if key.start_with?('z')
+      a, op, = gate.split
+      p "This is wrong: #{gate}" if op != 'XOR' && !a.start_with?('x')
+    else
+      # print key, ' -> ', gate, "\n"
+      _, op, = gate.split
+      p "This is wrong: #{gate}" if op == 'XOR'
     end
-
-    a, op, b = gate.split
-    some(operations, key, a, op, b)
   end
 
   0
