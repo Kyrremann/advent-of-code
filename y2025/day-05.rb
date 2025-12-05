@@ -43,8 +43,20 @@ def extend_range(freshness, fresh)
 
     return ([inner.first, fresh.first].min..[inner.last, fresh.last].max), inner
   end
+end
 
-  fresh
+def freshes(freshness)
+  freshness.each do |fresh|
+    extended, remove = extend_range(freshness, fresh)
+    next unless remove
+
+    freshness << extended
+    freshness.delete(remove)
+    freshness.delete(fresh)
+    return false
+  end
+
+  true
 end
 
 def star2(input, debug = false)
@@ -55,13 +67,12 @@ def star2(input, debug = false)
     (first..last)
   end
 
-  freshness.each do |fresh|
-    extended, remove = extend_range(freshness, fresh)
-    next unless remove
+  loop do
+    break if freshes(freshness)
+  end
 
-    freshness << extended
-    freshness.delete(remove)
-    freshness.delete(fresh)
+  freshness.each do |f|
+    p f
   end
 
   freshness.sum(&:count)
@@ -69,5 +80,7 @@ end
 
 p "Test: #{star2(test_input, true)} == 14"
 p "Star 2: #{star2(INPUT)}"
+
 # 27060 40493 49842
 # 20638 34571 55276
+# 19288 31118 94978
