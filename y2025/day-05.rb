@@ -33,49 +33,44 @@ end
 p "Test: #{star1(test_input, true)} == 3"
 p "Star 1: #{star1(INPUT)}"
 
-def extend_range(freshness, fresh)
-  ranges = freshness.select do |inner|
-    inner.include?(fresh.first) || inner.include?(fresh.last)
-  end
+def find(ranges, range)
+  ranges.select do |r|
+    next false if range == r
 
-  ranges.each do |inner|
-    next if inner == fresh
-
-    return ([inner.first, fresh.first].min..[inner.last, fresh.last].max), inner
+    range.include?(r.first) ||
+      range.include?(r.last)
   end
 end
 
-def freshes(freshness)
-  freshness.each do |fresh|
-    extended, remove = extend_range(freshness, fresh)
-    next unless remove
+def freshness(ranges)
+  ranges.each do |original|
+    found = find(ranges, original)
+    next if found.empty?
 
-    freshness << extended
-    freshness.delete(remove)
-    freshness.delete(fresh)
-    return false
+    range = original
+    found.each do |r|
+      ranges.delete(r)
+      range = ([range.first, r.first].min..[range.last, r.last].max)
+    end
+
+    ranges.delete(original)
+    ranges << range
   end
-
-  true
 end
 
 def star2(input, debug = false)
-  freshness, = input.split("\n\n")
+  ranges, = input.split("\n\n")
 
-  freshness = freshness.split.map do |fresh|
+  ranges = ranges.split.map do |fresh|
     first, last = fresh.split('-').map(&:to_i)
     (first..last)
   end
 
-  loop do
-    break if freshes(freshness)
-  end
+  ranges.sort! { |a, b| a.first <=> b.first }
 
-  freshness.each do |f|
-    p f
-  end
+  ranges = freshness(ranges)
 
-  freshness.sum(&:count)
+  ranges.sum(&:count)
 end
 
 p "Test: #{star2(test_input, true)} == 14"
@@ -84,3 +79,5 @@ p "Star 2: #{star2(INPUT)}"
 # 27060 40493 49842
 # 20638 34571 55276
 # 19288 31118 94978
+# 38458 37166 44056
+# 37436 03876 06186
