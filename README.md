@@ -1,2 +1,3 @@
-# advent-of-code
-Let's code some Christmas spirit
+Flyttet til Codeberg.
+
+https://codeberg.org/Kyrremann/advent-of-code
